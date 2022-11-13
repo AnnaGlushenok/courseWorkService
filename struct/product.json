@@ -1,0 +1,15 @@
+[
+{"category":"кисти", "product_code":"9i02g38uw87932", "name":"sonet 8",                       "description":"плоская",   "price":1000,"amount":100},
+{"category":"кисти", "product_code":"03356o23g7h23c", "name":"sonet 5",                       "description":"овальная",  "price":1000,"amount":120},
+{"category":"кисти", "product_code":"7802g38uw87932", "name":"sonet 8 щетина",                "description":"плоская",   "price":1000,"amount":100},
+{"category":"кисти", "product_code":"03356o2h23cv23", "name":"sonet 5 синтетика",             "description":"овальная",  "price":950,"amount":120},
+{"category":"кисти", "product_code":"89uh12f38913f8", "name":"sonet 15 щетина",               "description":"угловая",   "price":2300,"amount":30},
+{"category":"кисти", "product_code":"190834f9831240", "name":"sonet 3 синтетика",             "description":"лайнер",    "price":700,"amount":70},
+{"category":"кисти", "product_code":"132f4789217893", "name":"sonet акварельные краски",      "description":"24 цвета",  "price":500,"amount":50},
+{"category":"кисти", "product_code":"f234872f781871", "name":"sonet акварельные краски",      "description":"16 цветов", "price":500,"amount":50},
+{"category":"кисти", "product_code":"4f7625h13f847g", "name":"Белые ночи акварельные краски", "description":"24 цвета",  "price":700,"amount":170},
+{"category":"кисти", "product_code":"6893q2gw542455", "name":"pinax 7 синтетика",             "description":"угловая",   "price":1250,"amount":50},
+{"category":"кисти", "product_code":"f31478hv12n813", "name":"pinax 9 щетина",                "description":"плоская",   "price":1300,"amount":90},
+{"category":"кисти", "product_code":"c1m84t87nv189x", "name":"pinax 10 синтетика",            "description":"овальная",  "price":1500,"amount":200},
+{"category":"кисти", "product_code":"z9o04187vn7234", "name":"pinax 5 коза",                  "description":"лайнер",    "price":900,"amount":350}
+]
