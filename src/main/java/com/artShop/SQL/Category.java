@@ -1,16 +1,7 @@
 package com.artShop.SQL;
 
 public class Category {
-    private int id;
     private String name;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -20,8 +11,7 @@ public class Category {
         this.name = name;
     }
 
-    public Category(int id, String name) {
-        this.id = id;
+    public Category(String name) {
         this.name = name;
     }
 }
