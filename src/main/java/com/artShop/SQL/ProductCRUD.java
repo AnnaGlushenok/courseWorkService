@@ -30,21 +30,15 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
         stmt.setString(1, prod.getProductCode());
         stmt.setString(2, prod.getName());
         stmt.setString(3, prod.getDescription());
-        stmt.setDouble(4, prod.getPrice());
+        stmt.setInt(4, prod.getPrice());
         stmt.setInt(5, prod.getAmount());
 
-        stmt.executeQuery();
+        stmt.executeUpdate();
     }
 
     @Override
     public void insertMany(List<Product> products) throws Exception {
-        // StringBuilder sql = new StringBuilder();
-        var params = products.stream().map((el) -> "(?, ?, ?, ?, ?)").collect(Collectors.joining(", "));
-//        for (int i = 0; i < size; i++) {
-//            sql.append("(").append("?, ?, ?, ?, ?").append(")");
-//            if (i != size - 1)
-//                sql.append(", ");
-//        }
+        String params = products.stream().map((el) -> "(?, ?, ?, ?, ?)").collect(Collectors.joining(", "));
 
         String query = "INSERT INTO " + COLLECTION_NAME + " (`product_code`, `name`, `description`, `price`, `amount`) " +
                 "VALUES " + params;
@@ -56,10 +50,10 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
             stmt.setString(i * 5 + 1, prod.getProductCode());
             stmt.setString(i * 5 + 2, prod.getName());
             stmt.setString(i * 5 + 3, prod.getDescription());
-            stmt.setDouble(i * 5 + 4, prod.getPrice());
+            stmt.setInt(i * 5 + 4, prod.getPrice());
             stmt.setInt(i * 5 + 5, prod.getAmount());
         }
-        stmt.executeQuery();
+        stmt.executeUpdate();
     }
 
     @Override
@@ -70,17 +64,17 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
     }
 
     @Override
-    public void updateOne(Product prod, Object id) throws Exception {
-        String query = "UPDATE " + COLLECTION_NAME + " SET ,`product_code`= ?,`name`= ?,`description`= ?,`price`= ?,`amount`= ? WHERE id = ?";
+    public void updateOne(Product newProduct, Object id) throws Exception {
+        String query = "UPDATE " + COLLECTION_NAME + " SET `product_code`= ?,`name`= ?,`description`= ?,`price`= ?,`amount`= ? WHERE id = ?";
 
         PreparedStatement stmt = instance.getConnection().prepareStatement(query);
-        stmt.setString(1, prod.getProductCode());
-        stmt.setString(2, prod.getName());
-        stmt.setString(3, prod.getDescription());
-        stmt.setDouble(4, prod.getPrice());
-        stmt.setInt(5, prod.getAmount());
+        stmt.setString(1, newProduct.getProductCode());
+        stmt.setString(2, newProduct.getName());
+        stmt.setString(3, newProduct.getDescription());
+        stmt.setDouble(4, newProduct.getPrice());
+        stmt.setInt(5, newProduct.getAmount());
         stmt.setInt(6, (int) id);
-        stmt.executeQuery();
+        stmt.executeUpdate();
     }
 
     @Override
@@ -88,7 +82,7 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
         String query = "DELETE FROM " + COLLECTION_NAME + " WHERE id = ?";
         PreparedStatement stmt = instance.getConnection().prepareStatement(query);
         stmt.setInt(1, (int) id);
-        stmt.executeQuery();
+        stmt.executeUpdate();
     }
 
     @Override
@@ -99,7 +93,7 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
                     items.getString(2),
                     items.getString(3),
                     items.getString(4),
-                    items.getDouble(5),
+                    items.getInt(5),
                     items.getInt(6)
             ));
         }
