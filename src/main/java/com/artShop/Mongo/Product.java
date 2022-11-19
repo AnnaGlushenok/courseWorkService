@@ -1,12 +1,12 @@
 package com.artShop.Mongo;
 
 
-public class Products {
+public class Product {
     private String category;
     private String productCode;
     private String name;
     private String description;
-    private int price;
+    private double price;
     private int amount;
 
     public String getCategory() {
@@ -41,11 +41,11 @@ public class Products {
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -57,8 +57,8 @@ public class Products {
         this.amount = amount;
     }
 
-    public Products(String category, String productCode, String name,
-                    String description, int price, int amount) {
+    public Product(String category, String productCode, String name,
+                   String description, double price, int amount) {
         this.category = category;
         this.productCode = productCode;
         this.name = name;

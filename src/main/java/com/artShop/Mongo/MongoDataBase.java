@@ -1,73 +1,55 @@
 package com.artShop.Mongo;
 
+import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.DataBase;
-import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 
-import java.util.List;
+import java.util.HashMap;
 
-public class MongoDataBase implements DataBase<FindIterable> {
+public class MongoDataBase implements DataBase {
     //что делать с вставкой цифровых значений?
-    //TODO ограничить видимость методов
     private String url;
     private MongoClient mongo;
     private MongoDatabase dataBase;
+    private static MongoDataBase instance;
 
-    public MongoDataBase(String url, String dataBase) {
+    public static MongoDataBase getInstance() {
+        return instance;
+    }
+
+    public MongoDatabase getDataBase() {
+        return dataBase;
+    }
+
+    private MongoDataBase(String url, String dataBase) {
         this.url = url;
         this.dataBase = connect(dataBase);
     }
 
-    private MongoDatabase connect(String dataBase) {
-        //String url = "mongodb://localhost:27017";
-        mongo = MongoClients.create(url);
-        MongoDatabase db = mongo.getDatabase(dataBase);
+    private static HashMap<String, CRUD> entities = new HashMap<>();
 
-        return db;
+    public static void register(String key, CRUD crud) {
+        entities.put(key, crud);
+    }
+
+    public static MongoDataBase createInstance(String url, String dataBase) {
+        instance = new MongoDataBase(url, dataBase);
+        return instance;
+    }
+
+    private MongoDatabase connect(String dataBase) {
+        mongo = MongoClients.create(url);
+        return mongo.getDatabase(dataBase);
     }
 
     public void close() {
         mongo.close();
     }
 
-    public FindIterable<Document> findAll(String collectionName) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        return collection.find();
+    @Override
+    public CRUD getEntity(String key) {
+        return entities.get(key);
     }
-
-    public <T> FindIterable<Document> findByCriteria(String collectionName, T criteria) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        return collection.find((Bson) criteria);
-    }
-
-    public <T> void insert(String collectionName, T values) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        collection.insertOne((Document) values);
-    }
-
-    public <T> void insertMany(String collectionName, List<T> values) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        collection.insertMany((List<Document>) values);
-    }
-
-    public <T> void update(String collectionName, T cond, T updates) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        Bson update = new Document("$set", updates);
-
-        Document d = collection.findOneAndUpdate((Bson) cond, update);
-    }
-
-    public void deleteOne(String collectionName, String field, String value) {
-        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-        Bson query = Filters.eq(field, value);
-        collection.deleteOne(query);
-    }
-
-//    public <T> void deleteMany(String collectionName, String field, String value) {
-//        MongoCollection<Document> collection = dataBase.getCollection(collectionName);
-//        Bson query = Filters.all(field, value);
-//        collection.deleteMany(query);
-//    }
 }

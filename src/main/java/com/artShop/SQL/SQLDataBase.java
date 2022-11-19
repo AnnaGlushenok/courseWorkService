@@ -1,43 +1,47 @@
 package com.artShop.SQL;
 
+import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.DataBase;
 
-import java.sql.*;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.HashMap;
 
-public class SQLDataBase implements DataBase<ResultSet> {
-    private final Connection connection;
+public class SQLDataBase implements DataBase {
+    private Connection connection;
+    private static SQLDataBase instance;
 
-    public SQLDataBase(String url) throws SQLException {//jdbc:mysql://localhost/shop
-        connection = DriverManager.getConnection(url, "root", "");
+    public Connection getConnection() {
+        return connection;
     }
 
-    public ResultSet findAll(String query) throws SQLException {
-        Statement stmt = connection.createStatement();
-        return stmt.executeQuery();
+    public static SQLDataBase getInstance() {
+        return instance;
     }
 
-    public <T> ResultSet findByCriteria(String collectionName, T criteria) throws SQLException {
-        return connection.createStatement().executeQuery();
+    private static HashMap<String, CRUD> entities = new HashMap<>();
+
+    public static void register(String key, CRUD crud) {
+        entities.put(key, crud);
     }
 
-    public <T> void insert(String collectionName, T values) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute();
+
+    public void close() throws SQLException {
+        connection.close();
     }
 
-    public <T> void insertMany(String collectionName, List<T> values) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.executeQuery();
+    private SQLDataBase(String url, String dataBase, String user, String password) throws SQLException {//jdbc:mysql://localhost/shop
+        connection = DriverManager.getConnection(url + "/" + dataBase, user, password);
     }
 
-    public <T> void update(String collectionName, T desiredField, T desiredValue) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.executeQuery();
+    public static SQLDataBase createInstance(String url, String dataBase, String user, String password) throws SQLException {
+        SQLDataBase.instance = new SQLDataBase(url, dataBase, user, password);
+        return SQLDataBase.instance;
     }
 
-    public void deleteOne(String collectionName, String field, String value) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.executeQuery();
+    @Override
+    public CRUD getEntity(String key) {
+        return entities.get(key);
     }
 }

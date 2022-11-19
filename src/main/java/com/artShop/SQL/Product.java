@@ -1,10 +1,10 @@
 package com.artShop.SQL;
 
-public class Products {
+public class Product {
     private String productCode;
     private String name;
     private String description;
-    private int price;
+    private double price;
     private int amount;
 
     public String getProductCode() {
@@ -31,11 +31,11 @@ public class Products {
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -47,8 +47,8 @@ public class Products {
         this.amount = amount;
     }
 
-    public Products(String productCode, String name,
-                    String description, int price, int amount) {
+    public Product(String productCode, String name,
+                   String description, double price, int amount) {
         this.productCode = productCode;
         this.name = name;
         this.description = description;

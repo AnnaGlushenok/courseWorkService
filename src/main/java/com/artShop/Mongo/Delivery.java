@@ -1,11 +1,11 @@
 package com.artShop.Mongo;
 
-import org.bson.types.ObjectId;
+import org.bson.Document;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class Delivery {    //id_Product ?
-    private HashMap<ObjectId, Integer> orders;
+public class Delivery {
+    private Order[] orders;
     private String client;
     private String telephone;
     private String email;
@@ -13,11 +13,17 @@ public class Delivery {    //id_Product ?
     private String dateTime;
     private Boolean confirmed;
 
-    public HashMap<ObjectId, Integer> getOrders() {
-        return orders;
+    public ArrayList<Document> getOrders() {
+        ArrayList<Document> list = new ArrayList<>(orders.length);
+        for (Order o : orders)
+            list.add(new Document()
+                    .append("object_id", o.getObjectId())
+                    .append("amount", o.getAmount()));
+
+        return list;
     }
 
-    public void setOrders(HashMap<ObjectId, Integer> orders) {
+    public void setOrders(Order[] orders) {
         this.orders = orders;
     }
 
@@ -69,7 +75,7 @@ public class Delivery {    //id_Product ?
         this.confirmed = confirmed;
     }
 
-    public Delivery(HashMap<ObjectId, Integer> orders, String client, String telephone, String email, String address, String dateTime, Boolean confirmed) {
+    public Delivery(Order[] orders, String client, String telephone, String email, String address, String dateTime, Boolean confirmed) {
         this.orders = orders;
         this.client = client;
         this.telephone = telephone;

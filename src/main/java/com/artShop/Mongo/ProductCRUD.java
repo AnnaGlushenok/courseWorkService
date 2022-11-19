@@ -1,29 +1,31 @@
 package com.artShop.Mongo;
 
-import com.mongodb.client.FindIterable;
+import com.artShop.Interfases.CRUD;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductCRUD extends MongoDataBase {
-    public final String COLLECTION_NAME = "products";
+public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
 
-    public ProductCRUD(String url, String dataBase) {
-        super(url, dataBase);
+    static {
+        MongoDataBase.register("Product", new ProductCRUD());
     }
 
-    public FindIterable<Document> findAll() {
-        return super.findAll(COLLECTION_NAME);
+    public final String COLLECTION_NAME = "product";
+    private MongoDataBase mongo;
+
+    private ProductCRUD() {
+        mongo = MongoDataBase.getInstance();
     }
 
-    public FindIterable<Document> findByCriteria(Bson criteria) {//Filters.lt("amount", 100)
-        return super.findByCriteria(COLLECTION_NAME, criteria);
-    }
-
-    public void insert(Products product) {
+    @Override
+    public void insertOne(Product product) throws Exception {
         Document info = new Document()
                 .append("_id", new ObjectId())
                 .append("category", product.getCategory())
@@ -32,12 +34,15 @@ public class ProductCRUD extends MongoDataBase {
                 .append("description", product.getDescription())
                 .append("price", product.getPrice())
                 .append("amount", product.getAmount());
-        super.insert(COLLECTION_NAME, info);
+
+        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        client.insertOne(info);
     }
 
-    public void insertMany(String fields, ArrayList<Products> values) {
+    @Override
+    public void insertMany(List<Product> products) throws Exception {
         List<Document> listInfo = new ArrayList<>();
-        for (Products p : values)
+        for (Product p : products)
             listInfo.add(new Document()
                     .append("_id", new ObjectId())
                     .append("category", p.getCategory())
@@ -47,20 +52,56 @@ public class ProductCRUD extends MongoDataBase {
                     .append("price", p.getPrice())
                     .append("amount", p.getAmount()));
 
-        super.insertMany(COLLECTION_NAME, listInfo);
+        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        client.insertMany(listInfo);
     }
 
-    public void update(Bson cond, ArrayList<String> desiredUpdateField, ArrayList<String> desiredUpdateValue) {
-        //Bson cond = Filters.eq("name", "test");
+    @Override
+    public List<Product> findAll() throws SQLException {
+        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        var k = client.find();
+        return toList(k);
+    }
+
+    @Override
+    public void updateOne(Product newProduct, Object id) throws Exception {
+        Bson cond = Filters.eq("_id", (ObjectId) id);
         Document updates = new Document();
-        int size = desiredUpdateField.size();
-        for (int i = 0; i < size; i++)
-            updates.append(desiredUpdateField.get(i), desiredUpdateValue.get(i));
+        updates.append("category", newProduct.getCategory())
+                .append("product_code", newProduct.getProductCode())
+                .append("name", newProduct.getName())
+                .append("description", newProduct.getDescription())
+                .append("price", newProduct.getPrice())
+                .append("amount", newProduct.getAmount());
 
-        super.update(COLLECTION_NAME, cond, updates);
+        Bson setter = new Document("$set", updates);
+
+        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        client.findOneAndUpdate(cond, setter);
     }
 
-    public void deleteOne(String field, String value) {
-        super.deleteOne(COLLECTION_NAME, field, value);
+    @Override
+    public void deleteOne(Object id) throws Exception {
+        Bson cond = Filters.eq("_id", (ObjectId) id);
+
+        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        client.deleteOne(cond);
+    }
+
+    @Override
+    public List<Product> toList(Iterable<Document> items) throws SQLException {
+        ArrayList<Product> products = new ArrayList<>();
+        items.forEach((Document el) -> {
+            products.add(new Product(
+                    el.getString("category"),
+                    el.getString("product_code"),
+                    el.getString("name"),
+                    el.getString("description"),
+                    el.getDouble("price"),
+                    el.getInteger("amount")
+            ));
+        });
+
+        return products;
     }
 }
