@@ -3,6 +3,7 @@ package com.artShop.Mongo;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Delivery {
     private Order[] orders;
@@ -75,7 +76,8 @@ public class Delivery {
         this.confirmed = confirmed;
     }
 
-    public Delivery(Order[] orders, String client, String telephone, String email, String address, String dateTime, Boolean confirmed) {
+    public Delivery(Order[] orders, String client, String telephone, String email,
+                    String address, String dateTime, Boolean confirmed) {
         this.orders = orders;
         this.client = client;
         this.telephone = telephone;

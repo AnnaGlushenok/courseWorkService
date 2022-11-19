@@ -1,6 +1,7 @@
 package com.artShop.Mongo;
 
 import com.artShop.Interfases.CRUD;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
@@ -17,7 +18,7 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
         MongoDataBase.register("Product", new ProductCRUD());
     }
 
-    public final String COLLECTION_NAME = "product";
+    public final String COLLECTION_NAME = "products";
     private MongoDataBase mongo;
 
     private ProductCRUD() {
@@ -35,12 +36,12 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
                 .append("price", product.getPrice())
                 .append("amount", product.getAmount());
 
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        client.insertOne(info);
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        collection.insertOne(info);
     }
 
     @Override
-    public void insertMany(List<Product> products) throws Exception {
+    public void insertMany(List<Product> products) {
         List<Document> listInfo = new ArrayList<>();
         for (Product p : products)
             listInfo.add(new Document()
@@ -52,19 +53,18 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
                     .append("price", p.getPrice())
                     .append("amount", p.getAmount()));
 
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        client.insertMany(listInfo);
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        collection.insertMany(listInfo);
     }
 
     @Override
-    public List<Product> findAll() throws SQLException {
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        var k = client.find();
-        return toList(k);
+    public List<Product> findAll() {
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        return toList(collection.find());
     }
 
     @Override
-    public void updateOne(Product newProduct, Object id) throws Exception {
+    public void updateOne(Product newProduct, Object id) {
         Bson cond = Filters.eq("_id", (ObjectId) id);
         Document updates = new Document();
         updates.append("category", newProduct.getCategory())
@@ -75,21 +75,19 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
                 .append("amount", newProduct.getAmount());
 
         Bson setter = new Document("$set", updates);
-
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        client.findOneAndUpdate(cond, setter);
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        collection.findOneAndUpdate(cond, setter);
     }
 
     @Override
-    public void deleteOne(Object id) throws Exception {
+    public void deleteOne(Object id) {
         Bson cond = Filters.eq("_id", (ObjectId) id);
-
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        client.deleteOne(cond);
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        collection.deleteOne(cond);
     }
 
     @Override
-    public List<Product> toList(Iterable<Document> items) throws SQLException {
+    public List<Product> toList(Iterable<Document> items) {
         ArrayList<Product> products = new ArrayList<>();
         items.forEach((Document el) -> {
             products.add(new Product(
@@ -97,7 +95,7 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
                     el.getString("product_code"),
                     el.getString("name"),
                     el.getString("description"),
-                    el.getDouble("price"),
+                    el.getInteger("price"),
                     el.getInteger("amount")
             ));
         });
