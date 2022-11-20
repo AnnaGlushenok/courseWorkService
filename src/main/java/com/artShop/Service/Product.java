@@ -1,5 +1,4 @@
-package com.artShop.Mongo;
-
+package com.artShop.Service;
 
 public class Product {
     private String category;
@@ -66,5 +65,4 @@ public class Product {
         this.price = price;
         this.amount = amount;
     }
-
 }
