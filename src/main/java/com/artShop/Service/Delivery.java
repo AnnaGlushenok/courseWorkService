@@ -1,9 +1,8 @@
-package com.artShop.Mongo;
+package com.artShop.Service;
 
 import org.bson.Document;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Delivery {
     private Order[] orders;
@@ -18,7 +17,7 @@ public class Delivery {
         ArrayList<Document> list = new ArrayList<>(orders.length);
         for (Order o : orders)
             list.add(new Document()
-                    .append("object_id", o.getObjectId())
+                    .append("object_id", o.getId())
                     .append("amount", o.getAmount()));
 
         return list;

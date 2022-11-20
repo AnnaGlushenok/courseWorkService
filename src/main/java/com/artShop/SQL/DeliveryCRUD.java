@@ -27,7 +27,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
         String query = "INSERT INTO " + COLLECTION_NAME + " (`id_order`, `client`, `telephone`, `email`, `address`, `datetime`) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = instance.getConnection().prepareStatement(query);
-        stmt.setInt(1, delivery.getIdOrder());
+     //   stmt.setInt(1, delivery.getIdOrder());
         stmt.setString(2, delivery.getClient());
         stmt.setString(3, delivery.getTelephone());
         stmt.setString(4, delivery.getEmail());
@@ -46,7 +46,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
         int size = deliveries.size();
         for (int i = 0; i < size; i++) {
             Delivery delivery = deliveries.get(i);
-            stmt.setInt(i * 6 + 1, delivery.getIdOrder());
+          //  stmt.setInt(i * 6 + 1, delivery.getIdOrder());
             stmt.setString(i * 6 + 2, delivery.getClient());
             stmt.setString(i * 6 + 3, delivery.getTelephone());
             stmt.setString(i * 6 + 4, delivery.getEmail());
@@ -68,7 +68,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
         String query = "UPDATE " + COLLECTION_NAME + " SET `id_order`= ?,`client`= ?,`telephone`= ?,`email`= ?,`address`= ?,`datetime`= ? WHERE id = ?";
 
         PreparedStatement stmt = instance.getConnection().prepareStatement(query);
-        stmt.setInt(1, newDelivery.getIdOrder());
+     //   stmt.setInt(1, newDelivery.getOrder());
         stmt.setString(2, newDelivery.getClient());
         stmt.setString(3, newDelivery.getTelephone());
         stmt.setString(4, newDelivery.getEmail());
@@ -90,14 +90,14 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
     public List<Delivery> toList(ResultSet items) throws SQLException {
         ArrayList<Delivery> delivery = new ArrayList<>();
         while (items.next()) {
-            delivery.add(new Delivery(
-                    items.getInt(1),
-                    items.getString(2),
-                    items.getString(3),
-                    items.getString(4),
-                    items.getString(5),
-                    items.getString(6)
-            ));
+//            delivery.add(new Delivery(
+//                    items.getInt(1),
+//                    items.getString(2),
+//                    items.getString(3),
+//                    items.getString(4),
+//                    items.getString(5),
+//                    items.getString(6)
+//            ));
         }
         return delivery;
     }

@@ -1,14 +1,13 @@
 package com.artShop.Mongo;
 
 import com.artShop.Interfases.CRUD;
-import com.mongodb.client.FindIterable;
+import com.artShop.Service.Product;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

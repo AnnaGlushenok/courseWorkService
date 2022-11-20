@@ -15,7 +15,7 @@ public class CategoryCRUD implements CRUD<Category, ResultSet> {
         SQLDataBase.register("Category", new CategoryCRUD());
     }
 
-    public final String COLLECTION_NAME = "categories";
+    public static final String COLLECTION_NAME = "categories";
     private final SQLDataBase instance;
 
     private CategoryCRUD() {

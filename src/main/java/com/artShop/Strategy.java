@@ -28,12 +28,14 @@ public class Strategy {
             case "MONGODB" -> {
                 dataBase = MongoDataBase.createInstance(props.getProperty("MONGODB_URL"), props.getProperty("MONGODB_DATABASE"));
                 Class.forName("com.artShop.Mongo.ProductCRUD");
+                Class.forName("com.artShop.Mongo.DeliveryCRUD");
             }
             case "MYSQL" -> {
                 dataBase = SQLDataBase.createInstance(props.getProperty("MYSQL_URL"), props.getProperty("MYSQL_DATABASE"),
                         props.getProperty("MYSQL_USERNAME"), props.getProperty("MYSQL_PASSWORD"));
                 Class.forName("com.artShop.SQL.ProductCRUD");
-            }
+                Class.forName("com.artShop.SQL.DeliveryCRUD");
+             }
             default -> throw new Exception("No such Database");
         }
     }
