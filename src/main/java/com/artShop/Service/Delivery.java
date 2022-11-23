@@ -1,8 +1,7 @@
 package com.artShop.Service;
 
-import org.bson.Document;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Delivery {
     private Order[] orders;
@@ -13,14 +12,8 @@ public class Delivery {
     private String dateTime;
     private Boolean confirmed;
 
-    public ArrayList<Document> getOrders() {
-        ArrayList<Document> list = new ArrayList<>(orders.length);
-        for (Order o : orders)
-            list.add(new Document()
-                    .append("object_id", o.getId())
-                    .append("amount", o.getAmount()));
-
-        return list;
+    public Order[] getOrders() {
+        return orders;
     }
 
     public void setOrders(Order[] orders) {
@@ -73,6 +66,12 @@ public class Delivery {
 
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public ArrayList<Order> getListOrders() {
+        ArrayList<Order> listOrders = new ArrayList<>();
+        listOrders.addAll(Arrays.asList(orders));
+        return listOrders;
     }
 
     public Delivery(Order[] orders, String client, String telephone, String email,

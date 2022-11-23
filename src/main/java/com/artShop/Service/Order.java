@@ -2,7 +2,7 @@ package com.artShop.Service;
 
 public class Order {
     private int amount;
-    private Object id;
+    private Object productId;
 
     public int getAmount() {
         return amount;
@@ -12,16 +12,16 @@ public class Order {
         this.amount = amount;
     }
 
-    public Object getId() {
-        return id;
+    public Object getProductId() {
+        return productId;
     }
 
-    public void setObjectId(Object id) {
-        this.id = id;
+    public void setProductId(Object productId) {
+        this.productId = productId;
     }
 
-    public Order(int amount, Object id) {
+    public Order(int amount, Object productId) {
         this.amount = amount;
-        this.id = id;
+        this.productId = productId;
     }
 }

@@ -26,11 +26,21 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
         mongo = MongoDataBase.getInstance();
     }
 
+    public ArrayList<Document> getOrders(Order[] orders) {
+        ArrayList<Document> list = new ArrayList<>(orders.length);
+        for (Order o : orders)
+            list.add(new Document()
+                    .append("id_product", o.getProductId())
+                    .append("amount", o.getAmount()));
+
+        return list;
+    }
+
     @Override
     public void insertOne(Delivery delivery) throws Exception {
         Document info = new Document()
                 .append("_id", new ObjectId())
-                .append("orders", delivery.getOrders())
+                .append("orders", getOrders(delivery.getOrders()))
                 .append("client", delivery.getClient())
                 .append("telephone", delivery.getTelephone())
                 .append("email", delivery.getEmail())
