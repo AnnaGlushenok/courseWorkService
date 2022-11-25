@@ -1,7 +1,9 @@
-package com.artShop.Mongo;
+package com.artShop.DataBases.Mongo;
 
-import com.artShop.Interfases.CRUD;
+import com.artShop.DataBases.Entity;
+import com.artShop.Interfases.IProduct;
 import com.artShop.Service.Product;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
@@ -11,13 +13,13 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
+public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
 
     static {
-        MongoDataBase.register("Product", new ProductCRUD());
+        MongoDataBase.register(Entity.Product, new ProductCRUD());
     }
 
-    public final String COLLECTION_NAME = "products";
+    public final String COLLECTION_NAME = "product";
     private MongoDataBase mongo;
 
     private ProductCRUD() {
@@ -40,7 +42,7 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
     }
 
     @Override
-    public void insertMany(List<Product> products) {
+    public void insertMany(List<Product> products) throws Exception {
         List<Document> listInfo = new ArrayList<>();
         for (Product p : products)
             listInfo.add(new Document()
@@ -57,9 +59,11 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findAll(int limit, int offset) throws Exception {
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        return toList(collection.find());
+        FindIterable<Document> r = collection.find().skip(offset).limit(limit);
+        FindIterable<Document> rj = collection.find();
+        return toList(r);
     }
 
     @Override
@@ -86,7 +90,7 @@ public class ProductCRUD implements CRUD<Product, Iterable<Document>> {
     }
 
     @Override
-    public List<Product> toList(Iterable<Document> items) {
+    public List<Product> toList(Iterable<Document> items) throws Exception {
         ArrayList<Product> products = new ArrayList<>();
         items.forEach((Document el) -> {
             products.add(new Product(

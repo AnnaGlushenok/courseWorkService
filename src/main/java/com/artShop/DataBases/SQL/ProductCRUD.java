@@ -1,6 +1,7 @@
-package com.artShop.SQL;
+package com.artShop.DataBases.SQL;
 
-import com.artShop.Interfases.CRUD;
+import com.artShop.DataBases.Entity;
+import com.artShop.Interfases.IProduct;
 import com.artShop.Service.Product;
 
 import java.sql.Connection;
@@ -8,34 +9,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 
-public class ProductCRUD implements CRUD<Product, ResultSet> {
+public class ProductCRUD implements IProduct<Product, ResultSet> {
 
     static {
-        SQLDataBase.register("Product", new ProductCRUD());
+        SQLDataBase.register(Entity.Product, new ProductCRUD());
     }
 
     public final String COLLECTION_NAME = "product";
     private final SQLDataBase instance;
-    private final CategoryCRUD category;
 
     private ProductCRUD() {
         this.instance = SQLDataBase.getInstance();
-        category = (CategoryCRUD) instance.getEntity("Category");
     }
 
-    private void productCategoryInsert(List<String> codes, List<String> categories) throws SQLException {
+    private void productCategoryInsert(List<String> codes, List<String> categories, Connection connection) throws SQLException {
         String findIdProductQuery = "SELECT id FROM " + COLLECTION_NAME + " WHERE `product_code`= ?";
         String findIdCategoryQuery = "SELECT id FROM " + CategoryCRUD.COLLECTION_NAME + " WHERE `name` = ?";
 
         String params = codes.stream().map((el) -> "(?, ?)").collect(Collectors.joining(", "));
         String insertQuery = "INSERT INTO `product_category` (`id_category`, `id_product`) VALUES " + params;
 
-        Connection connection = instance.getConnection();
         PreparedStatement idProductStmt = connection.prepareStatement(findIdProductQuery);
         PreparedStatement idCategoryStmt = connection.prepareStatement(findIdCategoryQuery);
         PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
@@ -72,23 +68,30 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
                 "VALUES (?, ?, ?, ?, ?)";
         Connection connection = instance.getConnection();
         connection.setAutoCommit(false);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, prod.getProductCode());
+            stmt.setString(2, prod.getName());
+            stmt.setString(3, prod.getDescription());
+            stmt.setInt(4, prod.getPrice());
+            stmt.setInt(5, prod.getAmount());
 
-        PreparedStatement stmt = connection.prepareStatement(query);
-        stmt.setString(1, prod.getProductCode());
-        stmt.setString(2, prod.getName());
-        stmt.setString(3, prod.getDescription());
-        stmt.setInt(4, prod.getPrice());
-        stmt.setInt(5, prod.getAmount());
+            stmt.executeUpdate();
+            productCategoryInsert(
+                    new ArrayList<String>() {{
+                        add(prod.getProductCode());
+                    }},
+                    new ArrayList<String>() {{
+                        add(prod.getCategory());
+                    }},
+                    connection
+            );
 
-        productCategoryInsert(new ArrayList<String>() {{
-                                  add(prod.getProductCode());
-                              }},
-                new ArrayList<String>() {{
-                    add(prod.getCategory());
-                }});
-
-        stmt.executeUpdate();
-        connection.commit();
+            connection.commit();
+        } catch (Exception e) {
+            connection.rollback();
+            throw e;
+        }
     }
 
     @Override
@@ -115,14 +118,16 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
             stmt.setInt(i * 5 + 4, prod.getPrice());
             stmt.setInt(i * 5 + 5, prod.getAmount());
         }
-        productCategoryInsert(codes, categories);
         stmt.executeUpdate();
+        productCategoryInsert(codes, categories, connection);
         connection.commit();
     }
 
     @Override
-    public List<Product> findAll() throws Exception {
-        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME);
+    public List<Product> findAll(int limit, int offset) throws Exception {
+        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM product_view limit ? offset ?");
+        stmt.setInt(1, limit);
+        stmt.setInt(2, offset);
         ResultSet res = stmt.executeQuery();
         return toList(res);
     }
@@ -159,7 +164,7 @@ public class ProductCRUD implements CRUD<Product, ResultSet> {
         ArrayList<Product> products = new ArrayList<>();
         while (items.next()) {
             products.add(new Product(
-                    null,
+                    items.getString(7),
                     items.getString(2),
                     items.getString(3),
                     items.getString(4),
