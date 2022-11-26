@@ -87,7 +87,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
 
     @Override
     public List<Delivery> findAll(int limit, int offset) throws Exception {
-        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME + "limit ? offset ?");
+        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM delivery_view limit ? offset ?");
         stmt.setInt(1, limit);
         stmt.setInt(2, offset);
         ResultSet res = stmt.executeQuery();
@@ -154,14 +154,18 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
         ArrayList<Delivery> delivery = new ArrayList<>();
         while (items.next()) {
             delivery.add(new Delivery(
-                    null,
+                    new Order[]{
+                            new Order(
+                                    items.getInt(8),
+                                    items.getObject(7)
+                            )},
+                    items.getString(1),
+                    items.getString(2),
                     items.getString(3),
                     items.getString(4),
                     items.getString(5),
-                    items.getString(6),
-                    items.getString(7),
-                    items.getBoolean(8)
-            ));
+                    items.getBoolean(6)
+                    ));
         }
         return delivery;
     }

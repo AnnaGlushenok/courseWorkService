@@ -31,7 +31,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
         ArrayList<Document> list = new ArrayList<>(orders.length);
         for (Order o : orders)
             list.add(new Document()
-                    .append("id_product", new ObjectId(String.valueOf(o.getProductId())))
+                    .append("id_product", new ObjectId(o.getProductId().toString()))
                     .append("amount", o.getAmount()));
 
         return list;
@@ -46,28 +46,11 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
                 .append("telephone", delivery.getTelephone())
                 .append("email", delivery.getEmail())
                 .append("address", delivery.getAddress())
-                .append("dateTime", delivery.getDatetime())
+                .append("datetime", delivery.getDatetime())
                 .append("confirmed", delivery.getConfirmed());
 
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         collection.insertOne(info);
-    }
-
-    public void insertMany(List<Delivery> items) throws Exception {
-        List<Document> listInfo = new ArrayList<>();
-        for (Delivery d : items)
-            listInfo.add(new Document()
-                    .append("_id", new ObjectId())
-                    .append("orders", d.getOrders())
-                    .append("client", d.getClient())
-                    .append("telephone", d.getTelephone())
-                    .append("email", d.getEmail())
-                    .append("address", d.getAddress())
-                    .append("dateTime", d.getDatetime())
-                    .append("confirmed", d.getConfirmed()));
-
-        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        collection.insertMany(listInfo);
     }
 
     @Override
@@ -79,13 +62,12 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     @Override
     public void updateOne(Delivery newDelivery, Object id) throws Exception {
         Bson cond = Filters.eq("_id", (ObjectId) id);
-        Document updates = new Document();
-        updates.append("orders", newDelivery.getOrders())
+        Document updates = new Document().append("orders", getOrders(newDelivery.getOrders()))
                 .append("client", newDelivery.getClient())
                 .append("telephone", newDelivery.getTelephone())
                 .append("email", newDelivery.getEmail())
                 .append("address", newDelivery.getAddress())
-                .append("dateTime", newDelivery.getDatetime())
+                .append("datetime", newDelivery.getDatetime())
                 .append("confirmed", newDelivery.getConfirmed());
 
         Bson setter = new Document("$set", updates);
@@ -101,7 +83,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     }
 
     @Override
-    public List<Delivery> toList(Iterable<Document> items) throws SQLException {
+    public ArrayList<Delivery> toList(Iterable<Document> items) throws SQLException {
         ArrayList<Delivery> deliveries = new ArrayList<>();
         items.forEach((Document el) -> {
             ArrayList<Order> orders = new ArrayList<>();

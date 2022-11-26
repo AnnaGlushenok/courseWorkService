@@ -34,9 +34,7 @@ public class Order {
         this.productId = productId;
     }
 
-
     public Order() {
-
     }
 
     public Order(int amount, Object productId) {
