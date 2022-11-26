@@ -1,8 +1,8 @@
-package com.artShop;
+package com.artShop.DataBases;
 
+import com.artShop.DataBases.Mongo.MongoDataBase;
+import com.artShop.DataBases.SQL.SQLDataBase;
 import com.artShop.Interfases.DataBase;
-import com.artShop.Mongo.MongoDataBase;
-import com.artShop.SQL.SQLDataBase;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +15,6 @@ public class Strategy {
         return dataBase;
     }
 
-
     public static void initialize() throws Exception {
         Properties props = new Properties();
         try (FileInputStream fis = new FileInputStream("src/main/resources/application.properties")) {
@@ -27,14 +26,14 @@ public class Strategy {
         switch (props.getProperty("USE_DATABASE")) {
             case "MONGODB" -> {
                 dataBase = MongoDataBase.createInstance(props.getProperty("MONGODB_URL"), props.getProperty("MONGODB_DATABASE"));
-                Class.forName("com.artShop.Mongo.ProductCRUD");
-                Class.forName("com.artShop.Mongo.DeliveryCRUD");
+                Class.forName("com.artShop.DataBases.Mongo.ProductCRUD");
+                Class.forName("com.artShop.DataBases.Mongo.DeliveryCRUD");
             }
             case "MYSQL" -> {
                 dataBase = SQLDataBase.createInstance(props.getProperty("MYSQL_URL"), props.getProperty("MYSQL_DATABASE"),
                         props.getProperty("MYSQL_USERNAME"), props.getProperty("MYSQL_PASSWORD"));
-                Class.forName("com.artShop.SQL.ProductCRUD");
-                Class.forName("com.artShop.SQL.DeliveryCRUD");
+                Class.forName("com.artShop.DataBases.SQL.ProductCRUD");
+                Class.forName("com.artShop.DataBases.SQL.DeliveryCRUD");
              }
             default -> throw new Exception("No such Database");
         }

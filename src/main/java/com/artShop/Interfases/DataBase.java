@@ -1,5 +1,7 @@
 package com.artShop.Interfases;
 
+import com.artShop.DataBases.Entity;
+
 public interface DataBase {
-    CRUD getEntity(String key);
+    CRUD getEntity(Entity key);
 }

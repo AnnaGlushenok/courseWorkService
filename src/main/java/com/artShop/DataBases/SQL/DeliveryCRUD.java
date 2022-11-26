@@ -1,5 +1,6 @@
-package com.artShop.SQL;
+package com.artShop.DataBases.SQL;
 
+import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Service.Delivery;
 import com.artShop.Service.Order;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
     static {
-        SQLDataBase.register("Delivery", new DeliveryCRUD());
+        SQLDataBase.register(Entity.Delivery, new DeliveryCRUD());
     }
 
     public final String COLLECTION_NAME = "delivery";
@@ -74,7 +75,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
             stmt.setString(3, delivery.getTelephone());
             stmt.setString(4, delivery.getEmail());
             stmt.setString(5, delivery.getAddress());
-            stmt.setString(6, delivery.getDateTime());
+            stmt.setString(6, delivery.getDatetime());
             stmt.setBoolean(7, delivery.getConfirmed());
             stmt.executeUpdate();
             connection.commit();
@@ -85,43 +86,10 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
     }
 
     @Override
-    public void insertMany(List<Delivery> deliveries) throws Exception {
-        String params = deliveries.stream().map((el) -> "(?, ?, ?, ?, ?, ?, ?)").collect(Collectors.joining(", "));
-        String query = "INSERT INTO " + COLLECTION_NAME + " (`id_order`, `client`, `telephone`, `email`, `address`, `datetime`, `confirmed`) " +
-                "VALUES " + params;
-
-        Connection connection = instance.getConnection();
-        connection.setAutoCommit(false);
-
-        PreparedStatement findMaxStmt = connection.prepareStatement("Select max(id) from orders");
-        ResultSet res = findMaxStmt.executeQuery();
-        res.next();
-        int maxId = res.getInt(1);
-        try {
-            PreparedStatement stmt = connection.prepareStatement(query);
-            int size = deliveries.size();
-            for (int i = 0; i < size; i++) {
-                Delivery delivery = deliveries.get(i);
-                insertOrders(delivery.getListOrders(), maxId);
-                stmt.setInt(i * 7 + 1, maxId + 1);
-                stmt.setString(i * 7 + 2, delivery.getClient());
-                stmt.setString(i * 7 + 3, delivery.getTelephone());
-                stmt.setString(i * 7 + 4, delivery.getEmail());
-                stmt.setString(i * 7 + 5, delivery.getAddress());
-                stmt.setString(i * 7 + 6, delivery.getDateTime());
-                stmt.setBoolean(i * 7 + 7, delivery.getConfirmed());
-            }
-            stmt.executeUpdate();
-            connection.commit();
-        } catch (Exception e) {
-            connection.rollback();
-            throw e;
-        }
-    }
-
-    @Override
-    public List<Delivery> findAll() throws Exception {
-        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME);
+    public List<Delivery> findAll(int limit, int offset) throws Exception {
+        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME + "limit ? offset ?");
+        stmt.setInt(1, limit);
+        stmt.setInt(2, offset);
         ResultSet res = stmt.executeQuery();
         return toList(res);
     }
@@ -147,7 +115,7 @@ public class DeliveryCRUD implements CRUD<Delivery, ResultSet> {
             updateQueryStmt.setString(2, newDelivery.getTelephone());
             updateQueryStmt.setString(3, newDelivery.getEmail());
             updateQueryStmt.setString(4, newDelivery.getAddress());
-            updateQueryStmt.setString(5, newDelivery.getDateTime());
+            updateQueryStmt.setString(5, newDelivery.getDatetime());
             updateQueryStmt.setBoolean(6, newDelivery.getConfirmed());
             updateQueryStmt.setInt(7, (int) id);
             updateQueryStmt.executeUpdate();

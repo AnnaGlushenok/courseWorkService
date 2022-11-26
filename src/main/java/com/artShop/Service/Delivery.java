@@ -1,15 +1,28 @@
 package com.artShop.Service;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Delivery {
     private Order[] orders;
+    @NotBlank
+    @Length(max = 256)
     private String client;
+    @NotBlank
+    @Length(max = 256)
     private String telephone;
+    @NotBlank
+    @Length(max = 256)
     private String email;
+    @NotBlank
+    @Length(max = 256)
     private String address;
-    private String dateTime;
+    @NotBlank
+    @Length(max = 256)
+    private String datetime;
     private Boolean confirmed;
 
     public Order[] getOrders() {
@@ -52,12 +65,12 @@ public class Delivery {
         this.address = address;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDatetime() {
+        return datetime;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
     }
 
     public Boolean getConfirmed() {
@@ -81,7 +94,7 @@ public class Delivery {
         this.telephone = telephone;
         this.email = email;
         this.address = address;
-        this.dateTime = dateTime;
+        this.datetime = dateTime;
         this.confirmed = confirmed;
     }
 }

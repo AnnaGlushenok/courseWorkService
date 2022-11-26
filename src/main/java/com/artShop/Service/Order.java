@@ -1,8 +1,22 @@
 package com.artShop.Service;
 
+import javax.validation.constraints.Min;
+
 public class Order {
+    @Min(0)
+    private int id;
+    @Min(0)
     private int amount;
+
     private Object productId;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getAmount() {
         return amount;
@@ -18,6 +32,11 @@ public class Order {
 
     public void setProductId(Object productId) {
         this.productId = productId;
+    }
+
+
+    public Order() {
+
     }
 
     public Order(int amount, Object productId) {

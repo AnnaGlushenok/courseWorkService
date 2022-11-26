@@ -1,5 +1,6 @@
-package com.artShop.Mongo;
+package com.artShop.DataBases.Mongo;
 
+import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Service.Delivery;
 import com.artShop.Service.Order;
@@ -16,7 +17,7 @@ import java.util.List;
 public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
 
     static {
-        MongoDataBase.register("Delivery", new DeliveryCRUD());
+        MongoDataBase.register(Entity.Delivery, new DeliveryCRUD());
     }
 
     public final String COLLECTION_NAME = "delivery";
@@ -30,7 +31,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
         ArrayList<Document> list = new ArrayList<>(orders.length);
         for (Order o : orders)
             list.add(new Document()
-                    .append("id_product", o.getProductId())
+                    .append("id_product", new ObjectId(String.valueOf(o.getProductId())))
                     .append("amount", o.getAmount()));
 
         return list;
@@ -45,14 +46,13 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
                 .append("telephone", delivery.getTelephone())
                 .append("email", delivery.getEmail())
                 .append("address", delivery.getAddress())
-                .append("dateTime", delivery.getDateTime())
+                .append("dateTime", delivery.getDatetime())
                 .append("confirmed", delivery.getConfirmed());
 
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         collection.insertOne(info);
     }
 
-    @Override
     public void insertMany(List<Delivery> items) throws Exception {
         List<Document> listInfo = new ArrayList<>();
         for (Delivery d : items)
@@ -63,7 +63,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
                     .append("telephone", d.getTelephone())
                     .append("email", d.getEmail())
                     .append("address", d.getAddress())
-                    .append("dateTime", d.getDateTime())
+                    .append("dateTime", d.getDatetime())
                     .append("confirmed", d.getConfirmed()));
 
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
@@ -71,9 +71,9 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     }
 
     @Override
-    public List<Delivery> findAll() throws Exception {
-        MongoCollection<Document> client = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        return toList(client.find());
+    public List<Delivery> findAll(int limit, int offset) throws Exception {
+        MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
+        return toList(collection.find().skip(offset).limit(limit));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
                 .append("telephone", newDelivery.getTelephone())
                 .append("email", newDelivery.getEmail())
                 .append("address", newDelivery.getAddress())
-                .append("dateTime", newDelivery.getDateTime())
+                .append("dateTime", newDelivery.getDatetime())
                 .append("confirmed", newDelivery.getConfirmed());
 
         Bson setter = new Document("$set", updates);
@@ -107,7 +107,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
             ArrayList<Order> orders = new ArrayList<>();
             el.getList("orders", Document.class).forEach((Document e) -> {
                 orders.add(new Order(e.getInteger("amount"),
-                        e.getObjectId("id_product")));
+                        e.getObjectId("id_product").toString()));
             });
             deliveries.add(new Delivery(
                     orders.toArray(Order[]::new),
@@ -115,7 +115,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
                     el.getString("telephone"),
                     el.getString("email"),
                     el.getString("address"),
-                    el.getString("dateTime"),
+                    el.getString("datetime"),
                     el.getBoolean("confirmed")
             ));
         });

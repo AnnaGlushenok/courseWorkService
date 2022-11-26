@@ -1,4 +1,4 @@
-package com.artShop.SQL;
+package com.artShop.Service;
 
 public class Category {
     private String name;

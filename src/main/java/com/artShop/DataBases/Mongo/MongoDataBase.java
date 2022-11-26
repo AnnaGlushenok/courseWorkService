@@ -1,5 +1,6 @@
-package com.artShop.Mongo;
+package com.artShop.DataBases.Mongo;
 
+import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.DataBase;
 import com.mongodb.client.MongoClient;
@@ -28,9 +29,9 @@ public class MongoDataBase implements DataBase {
         this.dataBase = connect(dataBase);
     }
 
-    private static HashMap<String, CRUD> entities = new HashMap<>();
+    private static HashMap<Entity, CRUD> entities = new HashMap<>();
 
-    public static void register(String key, CRUD crud) {
+    public static void register(Entity key, CRUD crud) {
         entities.put(key, crud);
     }
 
@@ -49,7 +50,7 @@ public class MongoDataBase implements DataBase {
     }
 
     @Override
-    public CRUD getEntity(String key) {
+    public CRUD getEntity(Entity key) {
         return entities.get(key);
     }
 }

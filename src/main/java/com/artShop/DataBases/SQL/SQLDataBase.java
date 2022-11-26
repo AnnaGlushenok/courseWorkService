@@ -1,5 +1,6 @@
-package com.artShop.SQL;
+package com.artShop.DataBases.SQL;
 
+import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.DataBase;
 
@@ -9,30 +10,29 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class SQLDataBase implements DataBase {
-    private Connection connection;
     private static SQLDataBase instance;
+    private String url;
+    private String user;
+    private String password;
 
-    public Connection getConnection() {
-        return connection;
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url,user,password);
     }
 
     public static SQLDataBase getInstance() {
         return instance;
     }
 
-    private static HashMap<String, CRUD> entities = new HashMap<>();
+    private static HashMap<Entity, CRUD> entities = new HashMap<>();
 
-    public static void register(String key, CRUD crud) {
+    public static void register(Entity key, CRUD crud) {
         entities.put(key, crud);
     }
 
-
-    public void close() throws SQLException {
-        connection.close();
-    }
-
     private SQLDataBase(String url, String dataBase, String user, String password) throws SQLException {//jdbc:mysql://localhost/shop
-        connection = DriverManager.getConnection(url + "/" + dataBase, user, password);
+        this.url = url + "/" + dataBase;
+        this.user = user;
+        this.password = password;
     }
 
     public static SQLDataBase createInstance(String url, String dataBase, String user, String password) throws SQLException {
@@ -41,7 +41,7 @@ public class SQLDataBase implements DataBase {
     }
 
     @Override
-    public CRUD getEntity(String key) {
+    public CRUD getEntity(Entity key) {
         return entities.get(key);
     }
 }

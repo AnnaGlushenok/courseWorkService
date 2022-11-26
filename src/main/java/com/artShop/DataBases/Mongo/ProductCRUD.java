@@ -61,9 +61,7 @@ public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
     @Override
     public List<Product> findAll(int limit, int offset) throws Exception {
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
-        FindIterable<Document> r = collection.find().skip(offset).limit(limit);
-        FindIterable<Document> rj = collection.find();
-        return toList(r);
+        return toList(collection.find().skip(offset).limit(limit));
     }
 
     @Override

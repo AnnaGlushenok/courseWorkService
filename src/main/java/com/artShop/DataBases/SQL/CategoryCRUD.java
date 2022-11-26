@@ -1,6 +1,8 @@
-package com.artShop.SQL;
+package com.artShop.DataBases.SQL;
 
+import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.CRUD;
+import com.artShop.Service.Category;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +14,7 @@ import java.util.stream.Collectors;
 public class CategoryCRUD implements CRUD<Category, ResultSet> {
 
     static {
-        SQLDataBase.register("Category", new CategoryCRUD());
+        SQLDataBase.register(Entity.Category, new CategoryCRUD());
     }
 
     public static final String COLLECTION_NAME = "categories";
@@ -30,7 +32,6 @@ public class CategoryCRUD implements CRUD<Category, ResultSet> {
         stmt.executeUpdate();
     }
 
-    @Override
     public void insertMany(List<Category> categories) throws Exception {
         String params = categories.stream().map((el) -> "(?)").collect(Collectors.joining(", "));
         String query = "INSERT INTO " + COLLECTION_NAME + " (`name`) VALUES " + params;
@@ -45,8 +46,10 @@ public class CategoryCRUD implements CRUD<Category, ResultSet> {
     }
 
     @Override
-    public List<Category> findAll() throws Exception {
-        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME);
+    public List<Category> findAll(int limit, int offset) throws Exception {
+        PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM " + COLLECTION_NAME + "limit ? offset ?");
+        stmt.setInt(1, limit);
+        stmt.setInt(2, offset);
         ResultSet res = stmt.executeQuery();
         return toList(res);
     }

@@ -1,11 +1,32 @@
 package com.artShop.Service;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 public class Product {
+    @NotBlank
+    @Length(max = 256)
     private String category;
+    @NotBlank
+    @Length(max = 256)
+    @Pattern(regexp = "^[a-z0-9]{8,}$",
+            message = "должен содержать не менее 8 символов (латинские буквы и арабские цифры)")
     private String productCode;
+    @NotBlank
+    @Length(max = 256)
     private String name;
+    @NotBlank
+    @Length(max = 256)
     private String description;
+
+    @Min(0)
     private int price;
+
+    @Min(0)
     private int amount;
 
     public String getCategory() {
