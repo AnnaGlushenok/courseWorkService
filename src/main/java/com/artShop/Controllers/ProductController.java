@@ -4,15 +4,13 @@ import com.artShop.DataBases.Entity;
 import com.artShop.DataBases.Strategy;
 import com.artShop.Interfases.IProduct;
 import com.artShop.Service.Product;
-import com.artShop.Validation.Utils;
+import com.artShop.Interfases.Validation.ProductValidate;
+import com.artShop.Interfases.Validation.Utils;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.ResultSet;
@@ -29,15 +27,16 @@ public class ProductController {
         if (err.hasErrors())
             return Utils.sendError(err);
 
-        IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
+        IProduct table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
+            ProductValidate.isValid(product);
             table.insertOne(product);
         } catch (SQLException e) {
             response.setStatus(500);
-            return "Возникла проблема с базой данных";
+            return e.getMessage();
         } catch (Exception e) {
             response.setStatus(500);
-            return "Неизвестная ошибка";
+            return "er";
         }
 
         response.setStatus(HttpServletResponse.SC_CREATED);
@@ -46,17 +45,18 @@ public class ProductController {
 
     @RequestMapping(value = "/addMany", method = RequestMethod.POST)
     @ResponseBody
-    public String addManyProduct(HttpServletResponse response,
-                                 @Valid @RequestBody List<Product> products, BindingResult err) {
-        if (err.hasErrors())
-            return Utils.sendError(err);
-
+    @Valid
+    public String addManyProducts(HttpServletResponse response,
+                                  @RequestBody List<@Valid Product> products) {
         IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
+            String errors = ProductValidate.isValid(products);
+            if (errors.length() != 0)
+                return errors;
             table.insertMany(products);
         } catch (SQLException e) {
             response.setStatus(500);
-            return "Возникла проблема с базой данных";
+            return e.getMessage();
         } catch (Exception e) {
             response.setStatus(500);
             return "Неизвестная ошибка";
@@ -68,8 +68,7 @@ public class ProductController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public Object getProducts(@RequestParam(defaultValue = "10") String limit, @RequestParam(defaultValue = "0") String offset,
-                              HttpServletRequest request, HttpServletResponse response) {
+    public Object getProducts(@RequestParam(defaultValue = "10") String limit, @RequestParam(defaultValue = "0") String offset) {
         IProduct table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
             return table.findAll(Integer.parseInt(limit), Integer.parseInt(offset));
@@ -89,12 +88,18 @@ public class ProductController {
 
         IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
-            table.updateOne(product, new ObjectId(id));
-//            database.updateOne(product, Integer.parseInt(id));
+            ProductValidate.isValid(product);
+            if (id.length() == 24)
+                table.updateOne(product, new ObjectId(id));
+            else
+                table.updateOne(product, Integer.parseInt(id));
         } catch (SQLException e) {
             response.setStatus(500);
-            return "Возникла проблема с базой данных";
-        } catch (Exception e) {
+            return e.getMessage();
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "Неверный запрос";
+        }  catch (Exception e) {
             response.setStatus(500);
             return "Неизвестная ошибка";
         }
@@ -108,13 +113,18 @@ public class ProductController {
     public String deleteProduct(HttpServletResponse response, @PathVariable("id") String id) {
         IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
-            table.deleteOne( new ObjectId(id));
-//            database.deleteOne(Integer.parseInt(id));
+            if (id.length() == 24)
+                table.deleteOne(new ObjectId(id));
+            else
+                table.deleteOne(Integer.parseInt(id));
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Возникла проблема с базой данных";
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "Неверный запрос";
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 

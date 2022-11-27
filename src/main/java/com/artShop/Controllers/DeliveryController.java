@@ -3,19 +3,17 @@ package com.artShop.Controllers;
 import com.artShop.DataBases.Entity;
 import com.artShop.DataBases.Strategy;
 import com.artShop.Interfases.CRUD;
+import com.artShop.Interfases.Validation.DeliveryValidate;
 import com.artShop.Service.Delivery;
-import com.artShop.Service.Order;
-import com.artShop.Validation.Utils;
+import com.artShop.Interfases.Validation.Utils;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -23,18 +21,24 @@ import java.util.List;
 public class DeliveryController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addDelivery(HttpServletResponse response, @Valid @RequestBody Delivery delivery, BindingResult err) {
+    public String addDelivery(HttpServletResponse response, @RequestBody Delivery delivery, BindingResult err) {
         if (err.hasErrors())
             return Utils.sendError(err);
 
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
+            String errors = DeliveryValidate.isValid(delivery);
+            if (errors.length() != 0)
+                return errors;
             table.insertOne(delivery);
         } catch (SQLException e) {
             response.setStatus(500);
             return "Возникла проблема с базой данных";
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return e.getMessage();
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 
@@ -47,8 +51,7 @@ public class DeliveryController {
     public Object getDelivery(@RequestParam(defaultValue = "10") String limit, @RequestParam(defaultValue = "0") String offset) {
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
-            List r = table.findAll(Integer.parseInt(limit), Integer.parseInt(offset));
-            return r;
+            return table.findAll(Integer.parseInt(limit), Integer.parseInt(offset));
         } catch (NumberFormatException e) {
             return "Неверный параметр limit и/или offset";
         } catch (Exception e) {
@@ -65,13 +68,21 @@ public class DeliveryController {
 
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
-//            table.updateOne(delivery, new ObjectId(id));
-            table.updateOne(delivery, Integer.parseInt(id));
+            String errors = DeliveryValidate.isValid(delivery);
+            if (errors.length() != 0)
+                return errors;
+            if (id.length() == 24)
+                table.updateOne(delivery, new ObjectId(id));
+            else
+                table.updateOne(delivery, Integer.parseInt(id));
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Возникла проблема с базой данных";
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "Неверный запрос";
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 
@@ -84,13 +95,18 @@ public class DeliveryController {
     public String deleteDelivery(HttpServletResponse response, @PathVariable("id") String id) {
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
-            //  table.deleteOne(new ObjectId(id));
-            table.deleteOne(Integer.parseInt(id));
+            if (id.length() == 24)
+                table.deleteOne(new ObjectId(id));
+            else
+                table.deleteOne(Integer.parseInt(id));
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Возникла проблема с базой данных";
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "Неверный запрос";
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 
