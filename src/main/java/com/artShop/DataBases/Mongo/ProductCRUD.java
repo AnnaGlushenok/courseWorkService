@@ -3,7 +3,6 @@ package com.artShop.DataBases.Mongo;
 import com.artShop.DataBases.Entity;
 import com.artShop.Interfases.IProduct;
 import com.artShop.Service.Product;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;

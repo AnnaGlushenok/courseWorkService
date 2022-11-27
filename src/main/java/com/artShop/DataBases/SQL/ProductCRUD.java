@@ -128,8 +128,7 @@ public class ProductCRUD implements IProduct<Product, ResultSet> {
         PreparedStatement stmt = instance.getConnection().prepareStatement("SELECT * FROM product_view limit ? offset ?");
         stmt.setInt(1, limit);
         stmt.setInt(2, offset);
-        ResultSet res = stmt.executeQuery();
-        return toList(res);
+        return toList(stmt.executeQuery());
     }
 
     @Override
