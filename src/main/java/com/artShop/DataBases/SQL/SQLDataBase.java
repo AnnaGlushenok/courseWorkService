@@ -15,6 +15,8 @@ public class SQLDataBase implements DataBase {
     private String user;
     private String password;
 
+    private static HashMap<Entity, CRUD> entities = new HashMap<>();
+
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url,user,password);
     }
@@ -22,8 +24,6 @@ public class SQLDataBase implements DataBase {
     public static SQLDataBase getInstance() {
         return instance;
     }
-
-    private static HashMap<Entity, CRUD> entities = new HashMap<>();
 
     public static void register(Entity key, CRUD crud) {
         entities.put(key, crud);

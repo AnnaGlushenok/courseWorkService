@@ -10,11 +10,12 @@ import com.mongodb.client.MongoDatabase;
 import java.util.HashMap;
 
 public class MongoDataBase implements DataBase {
-    //что делать с вставкой цифровых значений?
     private String url;
     private MongoClient mongo;
     private MongoDatabase dataBase;
     private static MongoDataBase instance;
+    private static HashMap<Entity, CRUD> entities = new HashMap<>();
+
 
     public static MongoDataBase getInstance() {
         return instance;
@@ -28,8 +29,6 @@ public class MongoDataBase implements DataBase {
         this.url = url;
         this.dataBase = connect(dataBase);
     }
-
-    private static HashMap<Entity, CRUD> entities = new HashMap<>();
 
     public static void register(Entity key, CRUD crud) {
         entities.put(key, crud);
