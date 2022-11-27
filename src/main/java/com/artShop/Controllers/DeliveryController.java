@@ -4,8 +4,8 @@ import com.artShop.DataBases.Entity;
 import com.artShop.DataBases.Strategy;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.Validation.DeliveryValidate;
-import com.artShop.Service.Delivery;
 import com.artShop.Interfases.Validation.Utils;
+import com.artShop.Service.Delivery;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/delivery")
