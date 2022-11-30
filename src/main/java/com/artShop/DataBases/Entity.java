@@ -3,7 +3,9 @@ package com.artShop.DataBases;
 public enum Entity {
     Product("Product"),
     Delivery("Delivery"),
-    Category("Category");
+    Category("Category"),
+    Storage("Storage"),
+    Mail("Mail");
 
     private final String name;
 
