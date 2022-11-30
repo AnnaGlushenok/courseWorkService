@@ -1,7 +1,9 @@
 package com.artShop.Interfases.Validation;
 
+import com.artShop.DataBases.Mongo.MongoDataBase;
 import com.artShop.DataBases.SQL.SQLDataBase;
 import com.artShop.Exceptions.NoSuchCategoryException;
+import com.artShop.Exceptions.NotFoundSuchId;
 import com.artShop.Service.Product;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Validated
 public class ProductValidate {
     private static final SQLDataBase instance = SQLDataBase.getInstance();
+    private static final MongoDataBase instanceMongo = MongoDataBase.getInstance();
 
     public static void isValid(Product product) throws NoSuchCategoryException {
         if (instance != null)
@@ -33,6 +36,10 @@ public class ProductValidate {
             throw new NoSuchCategoryException(e);
         }
         return errors;
+    }
+
+    public static boolean isValidId(String id) throws NotFoundSuchId {
+        return Utils.isValidId(id, "product");
     }
 
     private static void checkCategory(Product product) throws NoSuchCategoryException {

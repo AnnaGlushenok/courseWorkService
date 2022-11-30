@@ -32,10 +32,10 @@ public class ProductController {
             ProductValidate.isValid(product);
             table.insertOne(product);
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return e.getMessage();
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "er";
         }
 
@@ -55,10 +55,10 @@ public class ProductController {
                 return errors;
             table.insertMany(products);
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return e.getMessage();
         } catch (Exception e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 
@@ -89,18 +89,19 @@ public class ProductController {
         IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
             ProductValidate.isValid(product);
+            ProductValidate.isValidId(id);
             if (id.length() == 24)
                 table.updateOne(product, new ObjectId(id));
             else
                 table.updateOne(product, Integer.parseInt(id));
         } catch (SQLException e) {
-            response.setStatus(500);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return e.getMessage();
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ClassCastException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Неверный запрос";
-        }  catch (Exception e) {
-            response.setStatus(500);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
         }
 
@@ -113,14 +114,15 @@ public class ProductController {
     public String deleteProduct(HttpServletResponse response, @PathVariable("id") String id) {
         IProduct<Product, ResultSet> table = (IProduct) Strategy.getDataBase().getEntity(Entity.Product);
         try {
+            ProductValidate.isValidId(id);
             if (id.length() == 24)
                 table.deleteOne(new ObjectId(id));
             else
                 table.deleteOne(Integer.parseInt(id));
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "Возникла проблема с базой данных";
-        } catch (NumberFormatException e) {
+            return e.getMessage();
+        } catch (NumberFormatException | ClassCastException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Неверный запрос";
         } catch (Exception e) {

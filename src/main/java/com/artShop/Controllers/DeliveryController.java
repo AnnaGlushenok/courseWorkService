@@ -68,6 +68,7 @@ public class DeliveryController {
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
             String errors = DeliveryValidate.isValid(delivery);
+            DeliveryValidate.isValidId(id);
             if (errors.length() != 0)
                 return errors;
             if (id.length() == 24)
@@ -76,10 +77,10 @@ public class DeliveryController {
                 table.updateOne(delivery, Integer.parseInt(id));
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "Возникла проблема с базой данных";
-        } catch (NumberFormatException e) {
+            return e.getMessage();
+        } catch (NumberFormatException | ClassCastException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "Неверный запрос";
+            return e.getMessage();
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
@@ -94,16 +95,17 @@ public class DeliveryController {
     public String deleteDelivery(HttpServletResponse response, @PathVariable("id") String id) {
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
+            DeliveryValidate.isValidId(id);
             if (id.length() == 24)
                 table.deleteOne(new ObjectId(id));
             else
                 table.deleteOne(Integer.parseInt(id));
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "Возникла проблема с базой данных";
-        } catch (NumberFormatException e) {
+            return e.getMessage();
+        } catch (NumberFormatException | ClassCastException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "Неверный запрос";
+            return e.getMessage();
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Неизвестная ошибка";
