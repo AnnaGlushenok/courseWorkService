@@ -62,7 +62,8 @@ public class MailCRUD implements CRUD<Mail, ResultSet> {
         while (items.next()) {
             mails.add(new Mail(
                     items.getString(2),
-                    items.getString(3)
+                    items.getString(3),
+                    items.getBoolean(4)
             ));
         }
         return mails;
