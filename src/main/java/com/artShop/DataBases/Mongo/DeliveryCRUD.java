@@ -1,6 +1,7 @@
 package com.artShop.DataBases.Mongo;
 
 import com.artShop.DataBases.Entity;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Service.Delivery;
 import com.artShop.Service.Order;
@@ -38,7 +39,7 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     }
 
     @Override
-    public void insertOne(Delivery delivery) throws Exception {
+    public void insertOne(Delivery delivery) throws CustomException {
         Document info = new Document()
                 .append("_id", new ObjectId())
                 .append("orders", getOrders(delivery.getOrders()))
@@ -54,13 +55,13 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     }
 
     @Override
-    public List<Delivery> findAll(int limit, int offset) throws Exception {
+    public List<Delivery> findAll(int limit, int offset) throws CustomException {
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         return toList(collection.find().skip(offset).limit(limit));
     }
 
     @Override
-    public void updateOne(Delivery newDelivery, Object id) throws Exception {
+    public void updateOne(Delivery newDelivery, Object id) throws CustomException {
         Bson cond = Filters.eq("_id", (ObjectId) id);
         Document updates = new Document().append("orders", getOrders(newDelivery.getOrders()))
                 .append("client", newDelivery.getClient())
@@ -76,14 +77,13 @@ public class DeliveryCRUD implements CRUD<Delivery, Iterable<Document>> {
     }
 
     @Override
-    public void deleteOne(Object id) throws Exception {
+    public void deleteOne(Object id) throws CustomException {
         Bson cond = Filters.eq("_id", (ObjectId) id);
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         collection.deleteOne(cond);
     }
 
-    @Override
-    public ArrayList<Delivery> toList(Iterable<Document> items) throws SQLException {
+    public ArrayList<Delivery> toList(Iterable<Document> items) throws CustomException {
         ArrayList<Delivery> deliveries = new ArrayList<>();
         items.forEach((Document el) -> {
             ArrayList<Order> orders = new ArrayList<>();

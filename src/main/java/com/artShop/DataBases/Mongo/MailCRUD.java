@@ -1,6 +1,7 @@
 package com.artShop.DataBases.Mongo;
 
 import com.artShop.DataBases.Entity;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Service.Mail;
 import com.mongodb.client.MongoCollection;
@@ -26,7 +27,7 @@ public class MailCRUD implements CRUD<Mail, Iterable<Document>> {
     }
 
     @Override
-    public void insertOne(Mail mail) throws Exception {
+    public void insertOne(Mail mail) throws CustomException {
         Document info = new Document()
                 .append("_id", new ObjectId())
                 .append("email", mail.getEmail())
@@ -38,14 +39,14 @@ public class MailCRUD implements CRUD<Mail, Iterable<Document>> {
     }
 
     @Override
-    public List<Mail> findAll(int limit, int offset) throws Exception {
+    public List<Mail> findAll(int limit, int offset) throws CustomException {
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         Bson f = Filters.eq("confirmed", false);
         return toList(collection.find(f).skip(offset).limit(limit));
     }
 
     @Override
-    public void updateOne(Mail update, Object id) throws Exception {
+    public void updateOne(Mail update, Object id) throws CustomException {
         Document updates = new Document()
                 .append("confirmed", true);
         Bson setter = new Document("$set", updates);
@@ -54,14 +55,13 @@ public class MailCRUD implements CRUD<Mail, Iterable<Document>> {
     }
 
     @Override
-    public void deleteOne(Object id) throws Exception {
+    public void deleteOne(Object id) throws CustomException {
         Bson cond = Filters.eq("_id", (ObjectId) id);
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         collection.deleteOne(cond);
     }
 
-    @Override
-    public List<Mail> toList(Iterable<Document> items) throws Exception {
+    public List<Mail> toList(Iterable<Document> items) throws CustomException {
         ArrayList<Mail> mails = new ArrayList<>();
         items.forEach((Document el) -> {
             mails.add(new Mail(

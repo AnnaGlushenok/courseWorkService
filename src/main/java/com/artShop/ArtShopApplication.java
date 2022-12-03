@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ArtShopApplication {
     public static void main(String[] args) throws Exception {
-        Strategy.initialize();
+        Strategy.initialize("src/main/resources/application.properties");
         SpringApplication.run(ArtShopApplication.class, args);
     }
 }

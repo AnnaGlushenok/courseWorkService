@@ -1,6 +1,7 @@
 package com.artShop.DataBases.Mongo;
 
 import com.artShop.DataBases.Entity;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.IProduct;
 import com.artShop.Service.Product;
 import com.mongodb.client.MongoCollection;
@@ -26,7 +27,7 @@ public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
     }
 
     @Override
-    public void insertOne(Product product) throws Exception {
+    public void insertOne(Product product) throws CustomException {
         Document info = new Document()
                 .append("_id", new ObjectId())
                 .append("category", product.getCategory())
@@ -41,7 +42,7 @@ public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
     }
 
     @Override
-    public void insertMany(List<Product> products) throws Exception {
+    public void insertMany(List<Product> products) throws CustomException {
         List<Document> listInfo = new ArrayList<>();
         for (Product p : products)
             listInfo.add(new Document()
@@ -58,7 +59,7 @@ public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
     }
 
     @Override
-    public List<Product> findAll(int limit, int offset) throws Exception {
+    public List<Product> findAll(int limit, int offset) throws CustomException {
         MongoCollection<Document> collection = mongo.getDataBase().getCollection(COLLECTION_NAME);
         return toList(collection.find().skip(offset).limit(limit));
     }
@@ -86,8 +87,7 @@ public class ProductCRUD implements IProduct<Product, Iterable<Document>> {
         collection.deleteOne(cond);
     }
 
-    @Override
-    public List<Product> toList(Iterable<Document> items) throws Exception {
+    public List<Product> toList(Iterable<Document> items) throws CustomException {
         ArrayList<Product> products = new ArrayList<>();
         items.forEach((Document el) -> {
             products.add(new Product(

@@ -1,0 +1,175 @@
+[
+  {
+    "name": "sonet 5 синтетика",
+    "description": "плоская",
+    "categories": [
+      "Кисти"
+    ]
+  },
+  {
+    "name": "sonet 3 синтетика",
+    "description": "лайнер",
+    "categories": [
+      "Кисти"
+    ]
+  },
+  {
+    "name": "pinax 5 коза",
+    "description": "круглая",
+    "categories": [
+      "Кисти"
+    ]
+  },
+  {
+    "name": "pinax 10 синтетика",
+    "description": "овальная",
+    "categories": [
+      "Кисти"
+    ]
+  },
+  {
+    "name": "pinax 9 синтетика",
+    "description": "плоская",
+    "categories": [
+      "Кисти"
+    ]
+  },
+  {
+    "name": "хлеб",
+    "description": "бородинский",
+    "categories": [
+      "Продукты"
+    ]
+  },
+  {
+    "name": "кефир",
+    "description": "скисший",
+    "categories": [
+      "Продукты"
+    ]
+  },
+  {
+    "name": "молоко",
+    "description": "1.5%",
+    "categories": [
+      "Продукты"
+    ]
+  },
+  {
+    "name": "тортик",
+    "description": "шоколадный",
+    "categories": [
+      "Продукты"
+    ]
+  },
+  {
+    "name": "чай",
+    "description": "чёрный",
+    "categories": [
+      "Продукты"
+    ]
+  },
+  {
+    "name": "лифчик",
+    "description": "75C",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "name": "трусы",
+    "description": "мужские красные",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "name": "носки",
+    "description": "41 зимние",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "name": "майка",
+    "description": "48",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "name": "колье",
+    "description": "золото",
+    "categories": [
+      "Бижутерия"
+    ]
+  },
+  {
+    "name": "серьги",
+    "description": "серебро и сапфиры",
+    "categories": [
+      "Бижутерия"
+    ]
+  },
+  {
+    "name": "кольцо",
+    "description": "золото",
+    "categories": [
+      "Бижутерия"
+    ]
+  },
+  {
+    "name": "подвеска",
+    "description": "белое золото и алмаз",
+    "categories": [
+      "Бижутерия"
+    ]
+  },
+  {
+    "name": "цепочка",
+    "description": "золото",
+    "categories": [
+      "Бижутерия"
+    ]
+  },
+  {
+    "name": "sonet акварельные краски",
+    "description": "24 цвета",
+    "categories": [
+      "акварельные краски",
+      "краски"
+    ]
+  },
+  {
+    "name": "sonet акварельные краски",
+    "description": "16 цветов",
+    "categories": [
+      "акварельные краски",
+      "краски"
+    ]
+  },
+  {
+    "name": "Белые ночи акварельные краски",
+    "description": "24 цвета",
+    "categories": [
+      "акварельные краски",
+      "краски"
+    ]
+  },
+  {
+    "name": "Ленинградские акварельные краски",
+    "description": "18 цвета",
+    "categories": [
+      "акварельные краски",
+      "краски"
+    ]
+  },
+  {
+    "name": "master class акварельные краски",
+    "description": "24 цвета",
+    "categories": [
+      "акварельные краски",
+      "краски"
+    ]
+  }
+]

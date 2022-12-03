@@ -2,6 +2,7 @@ package com.artShop.Controllers;
 
 import com.artShop.DataBases.Entity;
 import com.artShop.DataBases.Strategy;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.Validation.StorageValidate;
 import com.artShop.Service.Storage;
@@ -25,7 +26,7 @@ public class StorageController {
             if (errors.length() != 0)
                 return errors;
             table.insertOne(storage);
-        } catch (SQLException e) {
+        } catch (CustomException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return e.getMessage();
         } catch (Exception e) {

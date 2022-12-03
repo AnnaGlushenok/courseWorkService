@@ -15,14 +15,17 @@ public class Strategy {
         return dataBase;
     }
 
-    public static void initialize() throws Exception {
+    public static void initialize(String path) throws Exception {
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream("src/main/resources/application.properties")) {
+        try (FileInputStream fis = new FileInputStream(path)) {
             props.load(fis);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        initialize(props);
+    }
 
+    public static void initialize(Properties props) throws Exception {
         switch (props.getProperty("USE_DATABASE")) {
             case "MONGODB" -> {
                 dataBase = MongoDataBase.createInstance(props.getProperty("MONGODB_URL"), props.getProperty("MONGODB_DATABASE"));

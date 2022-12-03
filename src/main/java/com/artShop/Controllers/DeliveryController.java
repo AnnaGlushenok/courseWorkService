@@ -2,6 +2,7 @@ package com.artShop.Controllers;
 
 import com.artShop.DataBases.Entity;
 import com.artShop.DataBases.Strategy;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Interfases.Validation.DeliveryValidate;
 import com.artShop.Interfases.Validation.Utils;
@@ -20,25 +21,16 @@ import java.sql.SQLException;
 public class DeliveryController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addDelivery(HttpServletResponse response, @RequestBody Delivery delivery, BindingResult err) {
-        if (err.hasErrors())
-            return Utils.sendError(err);
-
+    public String addDelivery(HttpServletResponse response, @RequestBody Delivery delivery) {
         CRUD table = Strategy.getDataBase().getEntity(Entity.Delivery);
         try {
             String errors = DeliveryValidate.isValid(delivery);
             if (errors.length() != 0)
-                return errors;
+                throw new CustomException(errors, HttpServletResponse.SC_BAD_REQUEST);
             table.insertOne(delivery);
-        } catch (SQLException e) {
-            response.setStatus(500);
-            return "Возникла проблема с базой данных";
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (CustomException e) {
+            response.setStatus(e.getStatus());
             return e.getMessage();
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "Неизвестная ошибка";
         }
 
         response.setStatus(HttpServletResponse.SC_CREATED);

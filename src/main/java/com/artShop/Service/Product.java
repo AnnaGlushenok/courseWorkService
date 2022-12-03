@@ -25,6 +25,11 @@ public class Product {
     private int price;
     @Min(0)
     private int amount;
+    private Object id;
+
+    public Object getId() {
+        return id;
+    }
 
     public String getCategory() {
         return category;
@@ -58,5 +63,11 @@ public class Product {
         this.description = description;
         this.price = price;
         this.amount = amount;
+    }
+
+    public Product(Object id, String category, String productCode, String name,
+                   String description, int price, int amount) {
+        this(category, productCode, name, description, price, amount);
+        this.id = id;
     }
 }

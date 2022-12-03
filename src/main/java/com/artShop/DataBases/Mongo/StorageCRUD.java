@@ -1,6 +1,7 @@
 package com.artShop.DataBases.Mongo;
 
 import com.artShop.DataBases.Entity;
+import com.artShop.Exceptions.CustomException;
 import com.artShop.Interfases.CRUD;
 import com.artShop.Service.Storage;
 import com.mongodb.client.MongoCollection;
@@ -38,7 +39,7 @@ public class StorageCRUD implements CRUD<Storage, Iterable<Document>> {
     }
 
     @Override
-    public void insertOne(Storage storage) throws Exception {
+    public void insertOne(Storage storage) throws CustomException {
         Bson cond = Filters.eq("_id", new ObjectId(String.valueOf(storage.getIdStorage())));
         Bson updates = Updates.pushEach("products", getProducts(storage.getProducts()));
         MongoCollection<Document> collection = instance.getDataBase().getCollection(COLLECTION_NAME);
@@ -46,13 +47,13 @@ public class StorageCRUD implements CRUD<Storage, Iterable<Document>> {
     }
 
     @Override
-    public List<Storage> findAll(int limit, int offset) throws Exception {
+    public List<Storage> findAll(int limit, int offset) throws CustomException {
         MongoCollection<Document> collection = instance.getDataBase().getCollection(COLLECTION_NAME);
         return toList(collection.find().skip(offset).limit(limit));
     }
 
     @Override
-    public void updateOne(Storage update, Object objectId) throws Exception {
+    public void updateOne(Storage update, Object objectId) throws CustomException {
         ObjectId idProd = new ObjectId(String.valueOf(update.getProducts().get(0).getProductId()));
         Document updates = new Document()
                 .append("_id", new ObjectId(String.valueOf(objectId)))
@@ -66,7 +67,7 @@ public class StorageCRUD implements CRUD<Storage, Iterable<Document>> {
     }
 
     @Override
-    public void deleteOne(Object id) throws Exception {
+    public void deleteOne(Object id) throws CustomException {
     List<String> ids = (List<String>) id;
         Document updates = new Document().append("_id", new ObjectId(ids.get(0)));
         Bson setter = new Document()
@@ -78,8 +79,7 @@ public class StorageCRUD implements CRUD<Storage, Iterable<Document>> {
         collection.updateOne(updates, setter);
     }
 
-    @Override
-    public List<Storage> toList(Iterable<Document> items) throws Exception {
+    public List<Storage> toList(Iterable<Document> items) throws CustomException {
         ArrayList<Storage> storages = new ArrayList<>();
         items.forEach(el -> {
             ArrayList<Storage.Products> products = new ArrayList<>();

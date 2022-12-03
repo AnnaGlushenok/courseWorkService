@@ -1,16 +1,15 @@
 package com.artShop.Interfases;
 
+import com.artShop.Exceptions.CustomException;
+
 import java.util.List;
 
-public interface CRUD<T,R> {
-    void insertOne(T item) throws Exception;
+public interface CRUD<T, R> {
+    void insertOne(T item) throws CustomException;
 
-    List<T> findAll(int limit, int offset) throws Exception;
+    List<T> findAll(int limit, int offset) throws CustomException;
 
-    void updateOne(T update, Object id) throws Exception;
+    void updateOne(T update, Object id) throws CustomException;
 
-    void deleteOne(Object id) throws Exception;
-
-    //Iterable<Document>, ResultSet
-    List<T> toList(R items) throws Exception;
+    void deleteOne(Object id) throws CustomException;
 }

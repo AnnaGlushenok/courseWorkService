@@ -34,9 +34,6 @@ public class Storage {
         return products;
     }
 
-    public Storage() {
-    }
-
     public Storage(String address, List<Products> products) {
         this.address = address;
         this.products = products;
